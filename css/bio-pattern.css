@@ -1,0 +1,57 @@
+/* bio-pattern.css - Bio-Digital Visual Effects */
+
+/* Organism glow */
+.organism {
+  position: absolute;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  box-shadow: 0 0 12px rgba(0,255,255,0.7);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Different roles colors */
+.organism.blood-cell {
+  background-color: rgba(255,0,0,0.6);
+  box-shadow: 0 0 20px rgba(255,0,0,0.7);
+}
+.organism.virus {
+  background-color: rgba(255,0,150,0.5);
+  box-shadow: 0 0 25px rgba(255,0,150,0.7);
+}
+.organism.stem-cell {
+  background-color: rgba(0,200,255,0.5);
+  box-shadow: 0 0 25px rgba(0,200,255,0.7);
+}
+
+/* Bio digital particle pattern background */
+.playground::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-image: radial-gradient(circle, rgba(0,255,255,0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: drift 60s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes drift {
+  0% { transform: translate(0,0) rotate(0deg); }
+  100% { transform: translate(50px,50px) rotate(360deg); }
+}
+
+/* Glow pulse effect */
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 10px rgba(0,255,255,0.5); }
+  50% { box-shadow: 0 0 20px rgba(0,255,255,0.9); }
+  100% { box-shadow: 0 0 10px rgba(0,255,255,0.5); }
+}
+
+/* Apply pulse animation to stem cells */
+.organism.stem-cell {
+  animation: pulse-glow 2s infinite alternate;
+}

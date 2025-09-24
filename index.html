@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bio-Digital Organism Lab</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+  <header>
+    🧬 Bio-Digital Organism Lab
+  </header>
+
+  <main>
+    <!-- Left Panel -->
+    <div class="panel" id="controls">
+      <h2>Controls</h2>
+      <button id="spawn-btn">Spawn New Viewport</button>
+      <button id="mutate-btn">Mutate Organism</button>
+      <button id="reset-btn">Reset Organism</button>
+      <div id="status">System initializing...</div>
+    </div>
+
+    <!-- Canvas Panel -->
+    <div id="canvas-container">
+      <canvas id="glCanvas"></canvas>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="panel" id="bio-log">
+      <h2>Mutation Log</h2>
+      <ul id="log-entries"></ul>
+    </div>
+
+    <!-- Bottom Left Panel -->
+    <div class="panel" id="utils-panel">
+      <h2>Utils</h2>
+      <div class="console" id="utils-console">Ready...</div>
+    </div>
+
+    <!-- Bottom Right Panel -->
+    <div class="panel" id="comm-panel">
+      <h2>Communication</h2>
+      <div class="console" id="comm-console">Awaiting signals...</div>
+    </div>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
