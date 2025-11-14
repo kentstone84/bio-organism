@@ -96,24 +96,19 @@ main {
 /* Organisms (Cells) */
 .organism {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 4px solid #fff;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
   cursor: move;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   user-select: none;
 }
 
 .organism:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 30px rgba(255,255,255,0.6);
+  transform: scale(1.15);
   z-index: 100;
 }
 
@@ -121,23 +116,151 @@ main {
   cursor: grabbing;
 }
 
+/* Cell Body with Organelles */
+.cell-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.cell-cytoplasm {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  top: 5%;
+  left: 5%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(220, 252, 231, 0.95) 0%, rgba(187, 247, 208, 0.9) 100%);
+  overflow: hidden;
+}
+
+.cell-membrane {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 0 15px rgba(16, 185, 129, 0.2);
+  pointer-events: none;
+}
+
+/* Organelles */
+.organelle {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  cursor: help;
+  z-index: 2;
+}
+
+.organelle.nucleus {
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #818cf8 0%, #4f46e5 100%);
+  border: 2px solid #3730a3;
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.6);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+}
+
+.organelle.mitochondria {
+  width: 18px;
+  height: 18px;
+  background: radial-gradient(ellipse, #f87171 0%, #dc2626 100%);
+  border: 1.5px solid #991b1b;
+  border-radius: 40% 60% 60% 40%;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+  font-size: 0.7rem;
+}
+
+.organelle.ribosome {
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #c084fc 0%, #a855f7 100%);
+  border: 1px solid #7e22ce;
+  font-size: 0.5rem;
+  box-shadow: 0 0 4px rgba(168, 85, 247, 0.4);
+}
+
+.organelle.golgi {
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border: 2px solid #d97706;
+  border-radius: 20%;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+  font-size: 0.8rem;
+  top: 60%;
+  left: 70%;
+  transform: translate(-50%, -50%);
+}
+
+.organelle-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.organelle-container .organelle {
+  position: absolute;
+}
+
+/* Simple cell styles (virus, red blood cells) */
 .cell-emoji {
   font-size: 2.5rem;
   line-height: 1;
   margin-bottom: 4px;
   text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  border-radius: 50%;
 }
 
 .cell-label {
-  font-size: 0.7rem;
+  position: absolute;
+  bottom: -20px;
+  font-size: 0.65rem;
   font-weight: bold;
   text-align: center;
   color: #1f2937;
-  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 8px;
+  text-shadow: none;
   line-height: 1.1;
-  max-width: 70px;
+  max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Infected cell styling */
+.organism.infected .cell-cytoplasm {
+  background: radial-gradient(circle, rgba(187, 247, 208, 0.7) 0%, rgba(134, 239, 172, 0.8) 50%, rgba(74, 222, 128, 0.9) 100%);
+  animation: infection-pulse 1s ease-in-out infinite;
+}
+
+.organism.infected .nucleus {
+  background: radial-gradient(circle, #a78bfa 0%, #7c3aed 100%);
+  box-shadow: 0 0 15px rgba(167, 139, 250, 0.8);
+  animation: nucleus-corruption 0.8s ease-in-out infinite;
+}
+
+@keyframes infection-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(0.8) hue-rotate(30deg); }
+}
+
+@keyframes nucleus-corruption {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
 }
 
 /* Button Grid */

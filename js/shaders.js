@@ -1,5 +1,5 @@
 // shaders.js
-// GLSL shaders for the organism visuals
+// GLSL shaders for the organism visuals + shader manager export
 
 export const organismVertexShader = `
   varying vec3 vNormal;
@@ -21,3 +21,6 @@ export const organismFragmentShader = `
     gl_FragColor = vec4(color, 1.0);
   }
 `;
+
+// Export shaderManager from utils for organism.js compatibility
+export { shaderManager } from './utils.js';
