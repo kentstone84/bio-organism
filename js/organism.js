@@ -2,6 +2,7 @@ import { logEvent, distance, clamp } from "./utils.js";
 import { bus } from "./communication.js";
 import { shaderManager } from "./shaders.js";
 import { CELL_TYPES, EDUCATIONAL_FACTS } from "./cell-types.js";
+import { ORGANELLES, generateOrganellePositions, VIRUS_EFFECTS } from "./organelles.js";
 
 let organismCounter = 0;
 
@@ -18,10 +19,19 @@ export class Organism {
     this.element.id = this.id;
     this.element.className = "organism";
     this.element.setAttribute("draggable", "true");
-    this.element.innerHTML = `
-      <div class="cell-emoji">${this.config.emoji}</div>
-      <div class="cell-label">${this.config.name}</div>
-    `;
+
+    // Create organelles container for detailed cells
+    const showOrganelles = !this.config.isVirus && this.cellType !== "RED_BLOOD_CELL";
+    if (showOrganelles) {
+      this.element.innerHTML = this.createCellWithOrganelles();
+      this.organelleHealth = {};
+      this.initializeOrganelles();
+    } else {
+      this.element.innerHTML = `
+        <div class="cell-emoji">${this.config.emoji}</div>
+        <div class="cell-label">${this.config.name}</div>
+      `;
+    }
 
     const playground = document.querySelector(".playground");
     if (playground) {
@@ -44,6 +54,60 @@ export class Organism {
 
     logEvent(`${this.config.emoji} ${this.name} created.`);
     bus.emit("organism-created", this);
+  }
+
+  createCellWithOrganelles() {
+    return `
+      <div class="cell-body">
+        <div class="cell-cytoplasm">
+          <div class="organelle nucleus" title="${ORGANELLES.NUCLEUS.description}">
+            ${ORGANELLES.NUCLEUS.emoji}
+          </div>
+          <div class="organelle-container mitochondria-container"></div>
+          <div class="organelle-container ribosome-container"></div>
+          <div class="organelle golgi" title="${ORGANELLES.GOLGI.description}">
+            ${ORGANELLES.GOLGI.emoji}
+          </div>
+        </div>
+        <div class="cell-membrane" title="${ORGANELLES.CELL_MEMBRANE.description}"></div>
+      </div>
+      <div class="cell-label">${this.config.name}</div>
+    `;
+  }
+
+  initializeOrganelles() {
+    // Track health of each organelle type
+    Object.keys(ORGANELLES).forEach(key => {
+      this.organelleHealth[key] = 100;
+    });
+
+    // Add mitochondria
+    const mitoContainer = this.element.querySelector(".mitochondria-container");
+    if (mitoContainer) {
+      for (let i = 0; i < 3; i++) {
+        const mito = document.createElement("div");
+        mito.className = "organelle mitochondria";
+        mito.innerHTML = ORGANELLES.MITOCHONDRIA.emoji;
+        mito.title = ORGANELLES.MITOCHONDRIA.description;
+        mito.style.left = `${20 + i * 25}%`;
+        mito.style.top = `${30 + Math.random() * 40}%`;
+        mitoContainer.appendChild(mito);
+      }
+    }
+
+    // Add ribosomes
+    const riboContainer = this.element.querySelector(".ribosome-container");
+    if (riboContainer) {
+      for (let i = 0; i < 6; i++) {
+        const ribo = document.createElement("div");
+        ribo.className = "organelle ribosome";
+        ribo.innerHTML = ORGANELLES.RIBOSOME.emoji;
+        ribo.title = ORGANELLES.RIBOSOME.description;
+        ribo.style.left = `${Math.random() * 80}%`;
+        ribo.style.top = `${Math.random() * 80}%`;
+        riboContainer.appendChild(ribo);
+      }
+    }
   }
 
   setupTooltip() {
@@ -249,6 +313,14 @@ export class Organism {
     this.cellType = "INFECTED_CELL";
     this.config = CELL_TYPES.INFECTED_CELL;
 
+    // Add infected class for visual effects
+    this.element.classList.add("infected");
+
+    // Damage organelles if present
+    if (this.organelleHealth) {
+      this.damageOrganelles();
+    }
+
     // Update visual
     const emojiDiv = this.element.querySelector(".cell-emoji");
     const labelDiv = this.element.querySelector(".cell-label");
@@ -257,6 +329,30 @@ export class Organism {
 
     this.updateView();
     bus.emit("cell-infected", this);
+
+    logEvent(`⚠️ NUCLEUS HIJACKED! Virus is replicating inside the cell!`);
+  }
+
+  damageOrganelles() {
+    // Virus damages different organelles
+    if (this.organelleHealth.NUCLEUS) {
+      this.organelleHealth.NUCLEUS -= 30;
+      logEvent(`🔵 Nucleus damaged - virus hijacking DNA!`);
+    }
+    if (this.organelleHealth.RIBOSOME) {
+      this.organelleHealth.RIBOSOME -= 20;
+      logEvent(`• Ribosomes forced to make viral proteins!`);
+    }
+    if (this.organelleHealth.MITOCHONDRIA) {
+      this.organelleHealth.MITOCHONDRIA -= 15;
+      logEvent(`⚡ Mitochondria failing - cell losing energy!`);
+    }
+
+    // Visual feedback on organelles
+    const nucleus = this.element.querySelector(".nucleus");
+    if (nucleus) {
+      nucleus.style.filter = "brightness(0.7) hue-rotate(30deg)";
+    }
   }
 
   produceVirus() {
