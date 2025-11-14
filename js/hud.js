@@ -66,4 +66,9 @@ export class HUD {
       this.eventsEl.removeChild(this.eventsEl.lastChild);
     }
   }
+
+  // Alias for logEvent to match main.js usage
+  log(message) {
+    this.logEvent(message);
+  }
 }
